@@ -1,3 +1,44 @@
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.form {
+  text-align: center;
+  margin: 0 auto;
+  align-items: center;
+}
+
+.textField {
+  margin: 20px;
+}
+
+img {
+  height: 100px;
+  width: 100px;
+}
+
+.checkboxes-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.checkbox-container {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.fields-container {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 10px;
+  justify-content: center;
+  
+  @media (max-width: 768px) { 
+    flex-direction: column;
+  }
+}
+
 .signature-container {
   border: 2px solid black;
   padding: 10px; 

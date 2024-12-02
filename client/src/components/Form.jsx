@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
-import { TextField, Checkbox, Button, FormControlLabel } from '@mui/material';
+import { TextField, Checkbox, Button, FormControlLabel, Typography, Box } from '@mui/material';
 import SignatureCanvas from 'react-signature-canvas'
+import logo from '../images/logo_leah_genish.png';
 
 
 export default function Form() {
@@ -9,19 +10,27 @@ export default function Form() {
     const [last_name, setLast_name] = useState(null)
     const [phone, setPhone] = useState(null)
     const [health_issues, setHealth_issues] = useState({
+        בעיות_גב: false,
+        כאבי_שרירים: false,
+        מחלות_פרקים: false,
+        דלקת_לימפה: false,
+        סינוסים: false,
+        הפרעות_שינה: false,
+        סרטן: false,
+        סוכרת: false,
+        הפרעות_עיכול: false,
         לחץ_דם: false,
         אסתמה: false,
         פסוריאזיס: false
     })
-    const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+    const [decleration_date] = useState(new Date().toISOString().slice(0, 10));
     const [signature, setSignature] = useState(null)
     const sigPad = useRef(null)
 
-    const clearSignature = () => {
-        sigPad.current.clear()
-        setSignature(null)
+    function formatDiseaseName(diseaseName) {
+        return diseaseName.replace('_', ' ')
     }
-
+    
     const handleCheckboxChange = (event) => {
         const { name, checked } = event.target;
         setHealth_issues((prevIssues) => ({
@@ -29,22 +38,28 @@ export default function Form() {
             [name]: checked,
         }));
     };
-
+    
     const createCheckboxes = () => {
         return Object.keys(health_issues).map((issue) => (
             <FormControlLabel
-                key={issue}
-                control={
-                    <Checkbox
-                        name={issue}
-                        checked={health_issues[issue]}
-                        onChange={handleCheckboxChange}
-                    />
-                }
-                label={issue}
+                className='checkbox-container'
+            key={issue}
+            control={
+                <Checkbox
+                name={issue}
+                checked={health_issues[issue]}
+                onChange={handleCheckboxChange}
+                />
+            }
+            label={formatDiseaseName(issue)}
             />
         ));
     };
+    
+    const clearSignature = () => {
+        sigPad.current.clear()
+        setSignature(null)
+    }
 
     function validateID(id) {
         if (typeof id !== 'string') {
@@ -62,7 +77,7 @@ export default function Form() {
 
     const handleSignatureChange = () => {
         setSignature(sigPad.current.toDataURL());
-      };
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -75,7 +90,7 @@ export default function Form() {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ id, first_name, last_name, phone, health_issues, date, signature })
+                    body: JSON.stringify({ id, first_name, last_name, phone, health_issues, decleration_date, signature })
                 })
                 const data = await res.json();
                 if (data.err === false) {
@@ -99,54 +114,70 @@ export default function Form() {
     }
     return (
         // link to other page after sending
-        <form onSubmit={handleSubmit}>
-            <p>{date}</p>
-            <div>
+        <form onSubmit={handleSubmit} className='form'>
+            <Box
+                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#d1b3b5' }}
+            >
+                <img src={logo} alt="logo" />
+                <Typography variant='h6' component='h2'>טופס הצהרת בריאות </Typography>
+            </Box>
+            <Box className='fields-container'>
+                <Box className='feilds'>
+                    <TextField
+                        sx={{ margin: '10px' }}
+                        className='textField'
+                        label='תעודת זהות'
+                        variant='outlined'
+                        value={id}
+                        onChange={(e) => setId(e.target.value)}
+                        error={!validateID(id)}
+                        helperText={!validateID(id) ? 'תעודת זהות לא תקינה' : ''}
+                    />
+                </Box>
+                <Box className='feilds'>
+                    <TextField
+                        sx={{ margin: '10px' }}
+                        className='textField'
+                        label='שם פרטי'
+                        variant='outlined'
+                        value={first_name}
+                        onChange={(e) => setFirst_name(e.target.value)}
+                    />
+                </Box>
+                <Box className='feilds'>
+                    <TextField
+                        sx={{ margin: '10px' }}
+                        className='textField'
+                        label='שם משפחה'
+                        variant='outlined'
+                        value={last_name}
+                        onChange={(e) => setLast_name(e.target.value)}
+                    />
+                </Box>
 
-            <p>תעודת זהות</p>
-            <TextField
-                label='תעודת זהות'
-                variant='outlined'
-                value={id}
-                onChange={(e) => setId(e.target.value)}
-                error={!validateID(id)}
-                helperText={!validateID(id) ? 'תעודת זהות לא תקינה' : ''}
+                <TextField
+                    sx={{ margin: '10px' }}
+                    className='textField'
+                    label='טלפון'
+                    variant='outlined'
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                 />
-            </div>
-            <div>
-                <p>שם פרטי</p>
-            <TextField
-                label='שם פרטי'
-                variant='outlined'
-                value={first_name}
-                onChange={(e) => setFirst_name(e.target.value)}
-                />
-                </div>
-            <TextField
-                label='שם משפחה'
-                variant='outlined'
-                value={last_name}
-                onChange={(e) => setLast_name(e.target.value)}
-            />
-            <TextField
-                label='טלפון'
-                variant='outlined'
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-            />
-            <div>
+            </Box>
+                <p>סמני את התאים הרלוונטיים</p>
+            <Box className='checkboxes-container'>
                 {createCheckboxes()}
-            </div>
-            <div className='signature-container'>
+            </Box>
+            <Box className='signature-container'>
                 <SignatureCanvas
                     ref={sigPad}
                     onEnd={handleSignatureChange}
                     penColor='red'
-                    canvasProps={{width: 500, height: 200, className: 'sigCanvas'}}                   
+                    canvasProps={{ width: 500, height: 200, className: 'sigCanvas' }}
                     className='signature-pad'
                 />
                 <Button type='button' onClick={clearSignature}>נקה חתימה</Button>
-            </div>
+            </Box>
             <Button
                 type='submit'
             >אישור</Button>

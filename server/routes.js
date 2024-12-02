@@ -15,14 +15,9 @@ router.post('/new', async (req, res) => {
     const { id, first_name, last_name, phone, health_issues, decleration_date, signature } = req.body
     const strIssues = JSON.stringify(health_issues)
     try {
-        const checkifId = await Query(`SELECT * FROM health_declerations WHERE id = ${id}`)
         const q = 'INSERT INTO health_declerations(id, first_name, last_name, phone, health_issues, decleration_date, signature) VALUES (?, ?, ?, ?, ?, ?, ?)'
         const data = await Query(q, [id, first_name, last_name, phone, strIssues, decleration_date, signature])
         res.status(200).json({ err: false, msg: "dec added successfully" })
-        // if (id && first_name && last_name && phone && health_issues && decleration_date && signature) {
-        // } else {
-        //     res.status(400).json({ err: true, msg: "some info missing" })
-        // }
     } catch (error) {
         console.error(error)
         res.status(500).json({ err: true, msg: error })
