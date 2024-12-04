@@ -10,38 +10,49 @@ export default function Decleration() {
     const [signatureUrl, setSignatureUrl] = useState(null)
     const { decId } = useParams()
 
+    // async function fetchData() {
+    //     try {
+    //         const res = await fetch(`http://localhost:4040/declerations/decleration/${decId}`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         })
+    //         const data = await res.json()
+    //         setFormData(data[0])
+    //     } catch (error) {
+
+    //     }
+    // }
+
     useEffect(() => {
         const fetchData = async () => {
-             try {
-                 const res = await fetch(`http://localhost:4040/declerations/decleration/${decId}`, {
-                     method: 'GET',
-                     headers: {
-                         'Content-Type': 'application/json'
-                     }
-                 })
-                 const data = await res.json()
-                 console.log(data);
-                 setFormData(data[0])
-                 if (data[0].signature && data[0].signature.data) {
-                    const reader = new FileReader();
-                    reader.onloadend = () => {
-                      setSignatureUrl(reader.result);
-                    };
-                    reader.readAsDataURL(data[0].signature.data); 
-                 } else {
-                     console.log("have'nt signature");
-                  }
-     
-             } catch (error) {
-     console.error(error)
-             }
-         }
-         fetchData()
-      return () => {
-        
-      }
-    }, [decId])
+          try {
+            const res = await fetch(`http://localhost:4040/declerations/decleration/${decId}`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+            const data = await res.json();
+            setFormData(data);
     
+            // בדיקה והמרה של החתימה
+            if (data.signature && data.signature.data) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                setSignatureUrl(reader.result);
+              };
+              // התאם את השורה הבאה לפי סוג הנתונים ב-data.signature.data
+              reader.readAsDataURL(data.signature.data); // מניח שזה Blob או ArrayBuffer
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        };
+        fetchData();
+      }, [decId]);
+
     return (
         <div className='form'>
             {
@@ -65,7 +76,8 @@ export default function Decleration() {
                                 </div>
                             ))}
                             <p>תאריך: {formData.date}</p>
-                            <img src={signatureUrl} alt="" />
+                            {/* {signatureUrl && } */}
+                            <img className='sign-img' src={signatureUrl} alt="" />
 
                         </div>
                     )
