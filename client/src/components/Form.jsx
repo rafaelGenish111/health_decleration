@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { TextField, Checkbox, Button, FormControlLabel, Typography, Box } from '@mui/material';
-import SignatureCanvas from 'react-signature-canvas'
 import logo from '../images/logo_leah_genish.png';
+import SignatureCanvas from 'react-signature-canvas'
 
 
 export default function Form() {
@@ -30,7 +30,7 @@ export default function Form() {
     function formatDiseaseName(diseaseName) {
         return diseaseName.replace('_', ' ')
     }
-    
+
     const handleCheckboxChange = (event) => {
         const { name, checked } = event.target;
         setHealth_issues((prevIssues) => ({
@@ -38,24 +38,24 @@ export default function Form() {
             [name]: checked,
         }));
     };
-    
+
     const createCheckboxes = () => {
         return Object.keys(health_issues).map((issue) => (
             <FormControlLabel
                 className='checkbox-container'
-            key={issue}
-            control={
-                <Checkbox
-                name={issue}
-                checked={health_issues[issue]}
-                onChange={handleCheckboxChange}
-                />
-            }
-            label={formatDiseaseName(issue)}
+                key={issue}
+                control={
+                    <Checkbox
+                        name={issue}
+                        checked={health_issues[issue]}
+                        onChange={handleCheckboxChange}
+                    />
+                }
+                label={formatDiseaseName(issue)}
             />
         ));
     };
-    
+
     const clearSignature = () => {
         sigPad.current.clear()
         setSignature(null)
@@ -78,6 +78,12 @@ export default function Form() {
     const handleSignatureChange = () => {
         setSignature(sigPad.current.toDataURL());
     };
+
+    // const handleSignatureChange = () => {
+    //     const dataUrl = sigPad.current.toDataURL();
+    //     const blob = new Blob([dataUrl], { type: 'image/png' });
+    //     setSignature(blob);
+    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -164,7 +170,7 @@ export default function Form() {
                     onChange={(e) => setPhone(e.target.value)}
                 />
             </Box>
-                <p>סמני את התאים הרלוונטיים</p>
+            <p>סמני את התאים הרלוונטיים</p>
             <Box className='checkboxes-container'>
                 {createCheckboxes()}
             </Box>
